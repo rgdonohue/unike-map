@@ -56,8 +56,9 @@
   	position:absolute; 
   	top:40px; 
   	bottom:0; 
-  	width:100%; 
-  	margin-left: 156px;
+    right: 0;
+  	width:85%; 
+  	//margin-left: 156px;
   	z-index: 50;
  }
  #sidemenu {
@@ -68,7 +69,7 @@
 	top: 0;
 	bottom: 0;
 	padding-top: 30px;
-	width: 156px;
+	width: 15%;
  }
  #sidemenu h2 {
  	font-size: 1.2em;
@@ -176,7 +177,8 @@ function memberize(e,data,cities) {
                       opacity: 1
                   });
                   map.fitBounds(layer.getBounds(), {
-                      padding: [20,20]
+                      padding: [80,80],
+                      maxZoom: 8
                   });
               } else {
                   layer.setStyle({
