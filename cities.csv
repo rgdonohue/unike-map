@@ -3,7 +3,6 @@
 2,"Assam","India",26.51,92.61
 3,"Atlanta","USA",33.75,-84.39
 4,"Auckland","New Zealand",-36.84,174.77
-5,"Australia","Australia",-25.18,133.94
 6,"Bangkok","Thailand",13.75,100.47
 7,"Beijing","China",39.91,116.4
 8,"Belgrade","Serbia",44.82,20.47
@@ -34,7 +33,7 @@
 33,"Mondragon","Spain",43.07,2.48
 34,"Moscow","Russia",55.75,37.62
 35,"Munich","Germany",48.13,11.57
-36,"New York","USA",40.71,74.01
+36,"New York","USA",40.71,-74.01
 37,"Newfoundland","Canada",53,-60
 38,"Oslo","Norway",59.95,10.75
 39,"Paris","France",48.86,2.35
