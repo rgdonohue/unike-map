@@ -116,6 +116,8 @@
     
 var map = L.map('map')
     .setView([20, 40], 2);
+    
+var mapBounds;
 
 var tiles = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -124,15 +126,15 @@ var tiles = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.p
 	maxZoom: 18
 }).addTo(map);
     
-var customLayer = L.geoJson(null, {
+var citiesLayer = L.geoJson(null, {
     
     pointToLayer: function(feature,latlng) {
        return L.circleMarker(latlng, {
            fillColor: '#000000',
            color: '#e2b22c',
            weight: 2,
-           fillOpacity: 1,
-           opacity: 1,
+           fillOpacity: 0,
+           opacity: 0,
            radius: 5 
        })
     },
@@ -145,20 +147,16 @@ var customLayer = L.geoJson(null, {
 
 });
 
-var cities = omnivore.csv('cities.csv', null, customLayer).addTo(map);
+var cities = omnivore.csv('cities.csv', null, citiesLayer)//.addTo(map);
     
 var members = L.featureGroup();
     
-//$.get('member-data.csv', function(data) {
-//    memberize(data);
-//});
-
 queue()
     .defer(d3.csv,'member-data.csv')
-    .defer(d3.csv,'cities.csv')
+    //.defer(d3.csv,'cities.csv')
     .await(memberize)
     
-function memberize(e,data,cities) {
+function memberize(error,data) {
     
     var teamList =  document.getElementById('sidelist');
     
@@ -167,38 +165,94 @@ function memberize(e,data,cities) {
         var teamMember = teamList.appendChild(document.createElement('li'));
         teamMember.innerHTML = data[i].name;
         teamMember.className = 'id-'+data[i].id;
-        
+
         teamMember.addEventListener('mouseover', function(event) {
+            
             var target = $(event.target).attr('class');
+            
             members.eachLayer(function(layer){
-              if(layer.options.id == target){
-                  console.log(layer.options.id);
+                console.log(layer);
+            //  var pointsCoords = layer.getLatLngs();
+              
+                if(layer.id == target){
+                  console.log(layer.id);
                   layer.setStyle({
-                      opacity: 1
+                      opacity: 1,
+                      fillOpacity: 1
                   });
+                  console.log(layer);
+                  
+              } else {
+                  layer.setStyle({
+                      opacity: 0,
+                      fillOpacity: 0
+                  });
+                  
+                  
+//                  cities.eachLayer(function(layer) {
+//                      var pointCoords = layer.getLatLng();
+//                      for(var point in pointsCoords) {
+//                            
+//                          if(pointsCoords[point].lat == pointCoords.lat &&
+//                            pointsCoords[point].lon == pointCoords.lon) {
+//                                layer.setStyle({opacity:0});   
+//                          }
+//                      }
+//                      
+//                  });
+              }
+                
+            })
+        });
+        teamMember.addEventListener('click', function(event) {
+            
+           var target = $(event.target).attr('class');
+           members.eachLayer(function(layer){
+              if(layer.id == target){
                   map.fitBounds(layer.getBounds(), {
                       padding: [80,80],
                       maxZoom: 8
                   });
               } else {
-                  layer.setStyle({
-                      opacity: 0
-                  });
+                  // click events
               }
-            })
+            }) 
+            
         });
         
         
-        drawMember(data[i]);
+       drawMember(data[i]);
+
     }
     members.addTo(map);
     
-   
+    mapBounds = map.fitBounds(members.getBounds(), {
+          padding: [80,80],
+          maxZoom: 8
+      });
+    
+//    function loop() {
+//        advance();
+//        timer = setTimeout(loop, 2000);
+//    }
+   // setTimeout(fadeIn, 1000);
+    
+//    function fadeIn(){
+//        i = 0
+//        cities.eachLayer(function(layer) {            
+//            layer.setStyle({
+//               opacity: 1,
+//               fillOpacity: 1
+//            });
+//        });
+//    }
+    
 }
 
 function drawMember(member) {
 
     var latlngs = [];
+    
     for(var i=0;i<9;i++) {
         if(member[i] != "na" && i != 0) {
             
@@ -207,23 +261,35 @@ function drawMember(member) {
                     
                    var coords = layer.feature.geometry.coordinates;  
                    latlngs.push([coords[1],coords[0]]);
+               
                    
                 }
             });
             
         }
     }
-  
+    var mem = L.featureGroup();
+    mem.id = 'id-'+member.id;
+    
+    for (var ll in latlngs) {
+        L.circleMarker([latlngs[ll][0],latlngs[ll][1]], {
+           fillColor: '#000000',
+           color: '#e2b22c',
+           weight: 2,
+           fillOpacity: 1,
+           opacity: 1,
+           radius: 5 
+       }).addTo(mem);
+    }
     var memberLine = L.polyline(latlngs, {
         weight: 2,
-        opacity: 1,
+        opacity: 0,
         color: '#e2b22c',
-        id: 'id-'+member.id,
         clickable: false,
-        dashArray: '2,8',
-        
-        
-    }).addTo(members);
+        dashArray: '2,8',     
+    }).addTo(mem);
+    
+    mem.addTo(members);
     
 }
 
