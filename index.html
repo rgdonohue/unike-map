@@ -206,8 +206,12 @@ function test(error, members, cities){
                     
                     if(m[i] == id) {
                         
-                       content += '<br>'+m[i+'-arrival']+' &ndash; '+ m[i+'-departure'];
-                        
+                       if(m[i+'-arrival'] ===  m[i+'-departure']) {
+                            content += '<br>'+m[i+'-arrival'];
+                       } else {
+                           content += '<br>'+m[i+'-arrival']+' &ndash; '+ m[i+'-departure']; 
+                       }
+                      
                     }
                     
                 }
@@ -239,7 +243,13 @@ function test(error, members, cities){
             allMembers.eachLayer(function(layer) {
                 
                 if(target == layer.id){
+                    console.log(layer);
                     map.addLayer(layer);
+                    map.fitBounds(layer.getBounds(), {
+                      padding: [40,40],
+                      maxZoom: 8
+                  });
+                    
                 } else {
                     map.removeLayer(layer);   
                 }
@@ -251,7 +261,7 @@ function test(error, members, cities){
             
     }
     
-   //console.log(allMembers);
+    allMembers.addTo(map);
     
     
 }
