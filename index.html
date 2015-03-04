@@ -24,7 +24,7 @@
 <div id='map'></div>
 <div id='sidemenu'>
 <h2>UNIKE Research Fellows</h2>
-	<ul id="sidelist"></ul>
+	<ul id="sidelist"><li id="reset">ALL MEMEMBERS</li></ul>
     <p>Learn more about the <a href='http://unike.au.dk/people-and-partners/fellows/' target='_blank'>UNIKE Fellows and their research</a></p>
 </div>    
     
@@ -115,7 +115,7 @@ function ready(error, members, cities){
                 var content = '<b>'+props.city+', '+props.country+'</b>';
                 
                 for(var i=1;i<=9;i++) {
-                    console.log(m[1]);
+                   
                     if(m[i] == id) {
                         
                        if(m[i+'-arrival'] ===  m[i+'-departure']) {
@@ -165,12 +165,7 @@ function ready(error, members, cities){
         });
         teamMember.addEventListener('mouseout', function(event) {
             
-            allMembers.eachLayer(function(layer) {
-               
-                map.addLayer(layer);
-                
-            });
-            map.setView([20, 40], 2);
+
             
         });
         teamMember.addEventListener('click', function(event) {
@@ -188,61 +183,76 @@ function ready(error, members, cities){
             });
         });
         
+        
+        
             
     }
+    document.getElementById('reset').addEventListener('mouseover', function(event) {
+        
+        allMembers.eachLayer(function(layer) {
+                map.addLayer(layer);      
+        });
+    });
+    document.getElementById('reset').addEventListener('click', function(event) {
+        
+        allMembers.eachLayer(function(layer) {
+                map.addLayer(layer);      
+        });
+        map.setView([20, 40], 2);
+    });
     
     allMembers.addTo(map);
     
     
 }
 
-function drawMember(member) {
-
-    var latlngs = [];
-    
-    for(var i=0;i<9;i++) {
-        if(member[i] != "na" && i != 0) {
-            
-            cities.eachLayer(function(layer){
-                if(member[i] == layer.feature.properties.id){
-                    
-                   var coords = layer.feature.geometry.coordinates;  
-                   latlngs.push([coords[1],coords[0]]);
-               
-                   
-                }
-            });
-            
-            
-        }
-    }
-    var mem = L.featureGroup();
-    mem.id = 'id-'+member.id;
-    
-    var memberLine = L.polyline(latlngs, {
-        weight: 2,
-        opacity: 0,
-        color: '#e2b22c',
-        clickable: false,
-        dashArray: '2,8',     
-    }).addTo(mem);
-    
-    for (var ll in latlngs) {
-        var city = L.circleMarker([latlngs[ll][0],latlngs[ll][1]], {
-           fillColor: '#000000',
-           color: '#e2b22c',
-           weight: 2,
-           fillOpacity: 1,
-           opacity: 1,
-           radius: 5
-       });
-            
-       city.addTo(mem);
-    }
-
-    mem.addTo(members);
-    
-}
+//function drawMember(member) {
+//
+//    var latlngs = [];
+//    
+//    for(var i=0;i<9;i++) {
+//        if(member[i] != "na" && i != 0) {
+//            
+//            cities.eachLayer(function(layer){
+//                if(member[i] == layer.feature.properties.id){
+//                    
+//                   var coords = layer.feature.geometry.coordinates;  
+//                   latlngs.push([coords[1],coords[0]]);
+//               
+//                   
+//                }
+//            });
+//            
+//            
+//        }
+//    }
+//    var mem = L.featureGroup();
+//    mem.id = 'id-'+member.id;
+//    
+//    var memberLine = L.polyline(latlngs, {
+//        weight: 2,
+//        opacity: 0,
+//        color: '#e2b22c',
+//        clickable: false,
+//        dashArray: '2,8',     
+//    }).addTo(mem);
+//    
+//    for (var ll in latlngs) {
+//        var city = L.circleMarker([latlngs[ll][0],latlngs[ll][1]], {
+//           fillColor: '#000000',
+//           color: '#e2b22c',
+//           weight: 2,
+//           fillOpacity: 1,
+//           opacity: 1,
+//           radius: 5
+//       });
+//            
+//       city.addTo(mem);
+//    }
+//
+//    mem.addTo(members);
+//    
+//}
 
  
 </script>
